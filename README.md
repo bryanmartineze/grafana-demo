@@ -1,6 +1,6 @@
 1. Create an EKS cluster using Rancher
 
-2. Open the port 30080 to everyone from the Security Group
+2. Open the port 30080 and 32644 to everyone from the Security Group
 
 3. Clone the values-nodeport.yaml of this repo to your machine/kubernetes cli
 
