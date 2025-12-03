@@ -29,7 +29,7 @@ helm install cart podinfo/podinfo \
     % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
     0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0# HELP go_gc_duration_seconds A summary of the wall-time pause (stop-the-world) duration in garbage collection cycles.
-  # TYPE go_gc_duration_seconds summary
+
   1go_gc_duration_seconds{quantile="0"} 2.891e-05
   0go_gc_duration_seconds{quantile="0.25"} 0.000137514
   0go_gc_duration_seconds{quantile="0.5"} 0.000276659
@@ -49,5 +49,5 @@ curl -L https://hey-release.s3.us-east-2.amazonaws.com/hey_linux_amd64 \
 
 chmod +x hey
 sudo mv hey /usr/local/bin/  # if you have sudo
-# or just: mv hey ~/bin/ && export PATH=$PATH:~/bin
+or just: mv hey ~/bin/ && export PATH=$PATH:~/bin
 
