@@ -1,14 +1,14 @@
-# Keep the same “app.kubernetes.io/name: cart-podinfo”
+# Make the app show up as cart-podinfo (like before)
 nameOverride: cart-podinfo
 
-# Service settings – let Kubernetes create NodePorts
 service:
-  type: NodePort        # <– this is the important part
-  port: 9898            # HTTP (containerPort http)
-  grpcPort: 9999        # gRPC
-  metricsPort: 9797     # Prometheus metrics
+  enabled: true
+  type: NodePort      # <- expose outside the cluster
+  httpPort: 9898      # podinfo HTTP port
+  grpcPort: 9999      # podinfo gRPC port
+  metricsPort: 9797   # Prometheus metrics port
 
-  # if the chart supports nodePort override, you can add:
-  # nodePort: 30080
-  # grpcNodePort: 30081
-  # metricsNodePort: 30082
+  # Optional: fix the NodePort numbers yourself
+  nodePort: 30080         # HTTP
+  grpcNodePort: 30081     # gRPC (only if you need it)
+  metricsNodePort: 30082  # metrics (usually not needed externally)
