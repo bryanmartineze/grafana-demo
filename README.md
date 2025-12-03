@@ -7,6 +7,7 @@
 4. To install it run:
 
 helm repo add podinfo https://stefanprodan.github.io/podinfo
+
 helm repo update
 
 helm install cart podinfo/podinfo \
