@@ -1,14 +1,15 @@
-# Make the app show up as cart-podinfo (like before)
 nameOverride: cart-podinfo
 
 service:
   enabled: true
-  type: NodePort      # <- expose outside the cluster
-  httpPort: 9898      # podinfo HTTP port
-  grpcPort: 9999      # podinfo gRPC port
-  metricsPort: 9797   # Prometheus metrics port
+  type: NodePort
+  httpPort: 9898
+  grpcPort: 9999
+  metricsPort: 9797
+  nodePort: 30080
+  grpcNodePort: 32644
 
-  # Optional: fix the NodePort numbers yourself
-  nodePort: 30080         # HTTP
-  grpcNodePort: 30081     # gRPC (only if you need it)
-  metricsNodePort: 30082  # metrics (usually not needed externally)
+podAnnotations:
+  k8s.grafana.com/scrape: "true"
+  k8s.grafana.com/metrics.portNumber: "9898"
+  k8s.grafana.com/metrics.path: "/metrics"
