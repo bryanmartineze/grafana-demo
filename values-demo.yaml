@@ -15,7 +15,7 @@ podAnnotations:
   k8s.grafana.com/metrics.path: "/metrics"
 
 extraEnvs:
-  # 👇 This actually turns on tracing in podinfo
+  # This actually turns on tracing in podinfo
   - name: PODINFO_OTEL_EXPORTER
     value: otlp
 
