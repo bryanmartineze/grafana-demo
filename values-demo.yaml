@@ -14,8 +14,12 @@ podAnnotations:
   k8s.grafana.com/metrics.portNumber: "9898"
   k8s.grafana.com/metrics.path: "/metrics"
 
-# OpenTelemetry environment variables for traces
 extraEnvs:
+  # 👇 This actually turns on tracing in podinfo
+  - name: PODINFO_OTEL_EXPORTER
+    value: otlp
+
+  # Standard OTEL config for where to send spans
   - name: OTEL_EXPORTER_OTLP_ENDPOINT
     value: http://grafana-k8s-monitoring-alloy-receiver.grafana-agent.svc.cluster.local:4317
   - name: OTEL_EXPORTER_OTLP_PROTOCOL
