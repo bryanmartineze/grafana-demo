@@ -1,4 +1,4 @@
- Keep the same “app.kubernetes.io/name: cart-podinfo”
+# Keep the same “app.kubernetes.io/name: cart-podinfo”
 nameOverride: cart-podinfo
 
 # Service settings – let Kubernetes create NodePorts
