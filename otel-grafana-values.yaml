@@ -1,0 +1,118 @@
+cat > otel-grafana-values.yaml <<'EOF'
+opentelemetry-collector:
+  config: |
+    receivers:
+      otlp:
+        # https://github.com/open-telemetry/opentelemetry-collector/tree/main/receiver/otlpreceiver
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+
+    processors:
+      # For more information about the k8sattributes processor, see:
+      # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/k8sattributesprocessor#role-based-access-control
+      k8sattributes:
+        auth_type: serviceAccount
+        passthrough: false
+        filter:
+          node_from_env_var: KUBE_NODE_NAME
+        extract:
+          # The attributes provided in 'metadata' will be added to associated resources
+          metadata:
+            - k8s.pod.name
+            - k8s.pod.uid
+            - k8s.deployment.name
+            - k8s.namespace.name
+            - k8s.node.name
+            - k8s.pod.start_time
+            - service.namespace
+            - service.name
+            - service.version
+            - service.instance.id
+          otel_annotations: true
+        pod_association:
+          - sources:
+              - from: resource_attribute
+                name: k8s.pod.ip
+          - sources:
+              - from: resource_attribute
+                name: k8s.pod.uid
+          - sources:
+              - from: connection
+        # This rule will use the IP from the incoming connection and find the matching pod
+
+      resourcedetection/env:
+        # Detects env + k8s node info and attaches as resource attrs
+        # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor
+        detectors: ["env", "k8snode"]
+        override: false
+        timeout: 2s
+
+      resource/hostname:
+        # https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/resourceprocessor
+        attributes:
+          - action: insert
+            key: host.name
+            from_attribute: k8s.node.name
+
+      batch:
+        # https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/batchprocessor
+        timeout: 5s
+
+    exporters:
+      otlphttp/grafana_cloud:
+        # https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/otlphttpexporter
+        endpoint: "https://otlp-gateway-prod-us-east-3.grafana.net/otlp"
+        auth:
+          authenticator: basicauth/grafana_cloud
+
+    extensions:
+      basicauth/grafana_cloud:
+        # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/basicauthextension
+        client_auth:
+          username: "<your grafana user>"
+          password: "<your password>"
+
+    connectors:
+      grafanacloud:
+        # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/grafanacloudconnector
+        host_identifiers: ["k8s.node.name", "host.name"]
+
+    service:
+      extensions: [basicauth/grafana_cloud]
+
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors:
+            - k8sattributes
+            - resourcedetection/env
+            - resource/hostname
+            - batch
+          exporters: [otlphttp/grafana_cloud, grafanacloud]
+
+        metrics:
+          receivers: [otlp]
+          processors:
+            - k8sattributes
+            - resourcedetection/env
+            - resource/hostname
+            - batch
+          exporters: [otlphttp/grafana_cloud]
+
+        metrics/grafanacloud:
+          receivers: [grafanacloud]
+          processors: [batch]
+          exporters: [otlphttp/grafana_cloud]
+
+        logs:
+          receivers: [otlp]
+          processors:
+            - k8sattributes
+            - resourcedetection/env
+            - resource/hostname
+            - batch
+          exporters: [otlphttp/grafana_cloud]
+EOF
