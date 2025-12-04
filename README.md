@@ -1,22 +1,23 @@
 1. Create an EKS cluster using Rancher
 
 2.Install the OTEL Demo app
-helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
-helm repo update
 
-helm upgrade --install otel-demo open-telemetry/opentelemetry-demo \
-  -n ensemble-demo \
-  -f - <<EOF
-opentelemetry-collector:
-  config:
-    exporters:
-      otlphttp/grafana:
-        endpoint: "<GRAFANA_OTLP_ENDPOINT>"
-        headers:
-          # basic auth: user:api_key (the collector does this for you)
-          # some charts let you set username/password separately instead of this header,
-          # if so, use those fields instead.
-          Authorization: "Basic $(echo -n '<GRAFANA_OTLP_USER>:<GRAFANA_OTLP_API_KEY>' | base64)"
+    helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+    helm repo update
+    
+    helm upgrade --install otel-demo open-telemetry/opentelemetry-demo \
+      -n ensemble-demo \
+      -f - <<EOF
+    opentelemetry-collector:
+      config:
+        exporters:
+          otlphttp/grafana:
+            endpoint: "<GRAFANA_OTLP_ENDPOINT>"
+            headers:
+              # basic auth: user:api_key (the collector does this for you)
+              # some charts let you set username/password separately instead of this header,
+              # if so, use those fields instead.
+              Authorization: "Basic $(echo -n '<GRAFANA_OTLP_USER>:<GRAFANA_OTLP_API_KEY>' | base64)"
 
     service:
       pipelines:
