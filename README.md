@@ -39,3 +39,16 @@ EOF
 kubectl patch svc frontend-proxy \
   -n ensemble-demo \
   -p '{"spec": {"type": "LoadBalancer"}}'
+
+4.-Create the otel repo
+
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm repo update
+
+5.-Install the otel collector
+
+helm upgrade --install otel-demo open-telemetry/opentelemetry-demo \
+  -n ensemble-demo \
+  -f otel-grafana-values.yaml
+
+
