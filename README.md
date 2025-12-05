@@ -1,6 +1,12 @@
-1. Create an EKS cluster using Rancher
+1.Create an EKS cluster using Rancher
 
-2.Install the OTEL Demo app
+2.Create a Grafana Cloud Stack, go into Connections > Add new connection > Kubernetes Monitoring
+
+3.Set the correct parameters including metric Sources of Autodiscovery with annotations and Prometheus Operator objects and Generate a Token
+
+4.Deploy the manifest to your kubernetes cluster
+
+Optional.Install the OTEL Demo app just to see if it works
 
     helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
     helm repo update
@@ -35,21 +41,23 @@
           exporters: [otlphttp/grafana]
     EOF
 
-3.-Create an ELB to expose the app to internet
-
-    kubectl patch svc frontend-proxy \
-      -n ensemble-demo \
-      -p '{"spec": {"type": "LoadBalancer"}}'
-
-4.-Create the otel repo
+5.-Create the otel repo helm chart
 
     helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
     helm repo update
 
-5.-Install the otel collector
+6.-Install the otel demo with the parameter of otel-grafana-values.yaml included in this repo, also modify the values with the correct parameters of <Grafana User> and <Grafana Token>
 
     helm upgrade --install otel-demo open-telemetry/opentelemetry-demo \
       -n ensemble-demo \
       -f otel-grafana-values.yaml
 
+
+7.-Create an ELB to expose the app to internet
+
+    kubectl patch svc frontend-proxy \
+      -n ensemble-demo \
+      -p '{"spec": {"type": "LoadBalancer"}}'
+
+8. Check the ELB name inside AWS EC2 and enter the application using awselbdns:8080
 
