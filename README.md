@@ -33,7 +33,7 @@
           receivers: [otlp]
           processors: [batch]
           exporters: [otlphttp/grafana]
-EOF
+    EOF
 
 3.-Create an ELB to expose the app to internet
 
