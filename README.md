@@ -61,3 +61,17 @@ Optional.Install the OTEL Demo app just to see if it works
 
 8. Check the ELB name inside AWS EC2 and enter the application using awselbdns:8080
 
+9. Go to Grafana > Observability > Frontend > Start Observing
+
+10. Put the "Application name": emsemble-frontend and in "Domains": http://foo.bar.com, click Next
+
+11. in "Choose your package", choose CDN
+
+12. Copy the "url" of the snippet and put it in index.html
+
+13. Build the docker image and push it into your fav repository
+
+14. Modify the ensemble-frontend.yaml to use the image you pushed and deploy it into your eks cluster
+
+15. Modify the URL with the domain of the alb created by the deployment svc of ensemble-frontend
+
